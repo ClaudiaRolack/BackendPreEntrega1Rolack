@@ -3,7 +3,7 @@ const fs = require("fs").promises;
 async function getNextId() {
     try {
 
-      const data = await fs.readFile("./src/products.json", "utf-8");
+      const data = await fs.readFile("./products.json", "utf-8");
       const products = JSON.parse(data);
   
       const lastProduct = products[products.length - 1];

@@ -1,5 +1,5 @@
 const fs = require("fs").promises;
-const getNextId = require("../helpers/getNextId")
+const getNextId = require("../helpers/getNextId.js")
 
 class Product {
   constructor(productData, id) {
@@ -19,7 +19,7 @@ class Product {
 class ProductManager {
 
     constructor() {
-       this.path = "./src/products.json"
+       this.path = "./products.json"
     }
 
     readProduct = async () => {
@@ -33,6 +33,7 @@ class ProductManager {
 
     exist = async (id) => {
         let products = await this.readProduct()
+        id = parseInt(id)
         return products.find(product => product._id === id)
     }
 

@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //rutas
 app.use("/api/products", productsRouter);
-app.use("/", cartsRouter);
+app.use("/api/cart", cartsRouter);
 
 //ruta para servir el archivo .html
 app.get("/", (req, res) => {
