@@ -4,10 +4,10 @@ const {ProductManager} = require("../services/productService")
 
 const product = new ProductManager()
 
-router.get("/", async (req, res) => {
+router.get("/list", async (req, res) => {
     let allProducts = await product.getProducts()
     console.log(allProducts)
-    res.render("home",{
+    res.render("home.hbs",{
         products : allProducts
     })
 })
