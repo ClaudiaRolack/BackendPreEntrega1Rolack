@@ -21,4 +21,4 @@ async function getNextId() {
     }
   }
 
-  module.exports = getNextId
+  module.exports = getNextId;

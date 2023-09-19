@@ -1,18 +1,16 @@
 const express = require("express");
-const http = require("http")
-const socketIo = require("socket.io")
+const http = require("http");
+const socketIo = require("socket.io");
 const path = require("path");
 const { Server } = require("socket.io");
-const handlebars = require("express-handlebars")
-const Swal = require('sweetalert2');
+const handlebars = require("express-handlebars");
 const productsRouter = require("./routes/products.router");
-const cartsRouter = require("./routes/carts.router"); 
-const viewsRouter = require("./routes/views.router")
-const realTimeproducts = require("./routes/realTimeproducts.router")
-const {ProductManager} = require("./services/productService")
+const cartsRouter = require("./routes/carts.router");
+const viewsRouter = require("./routes/views.router");
+const realTimeproducts = require("./routes/realTimeproducts.router");
+const { ProductManager } = require("./services/productService");
 
-const product = new ProductManager()
-
+const product = new ProductManager();
 
 const app = express();
 const server = http.createServer(app);
@@ -25,10 +23,10 @@ app.set("view engine", "handlebars");
 
 //middlewars
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 //configuracion de la carpeta views
-app.use(express.static(__dirname, + "/views"))
+app.use(express.static(__dirname, + "/views"));
 
 //configuracion carpeta public    
 app.use(express.static(path.join(__dirname, 'public')));
@@ -37,29 +35,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use("/api/products", productsRouter);
 app.use("/api/cart", cartsRouter);
 app.use("/home", viewsRouter);
-app.use("/realtimeproducts", realTimeproducts)
-
-
-
+app.use("/realtimeproducts", realTimeproducts);
 
 //configuracion socket.io
-io.on('connection', (socket) => { 
+io.on('connection', (socket) => {
 
+    console.log('a user connected');
 
-    54
-
-    console.log('a user connected')
-
-    socket.on('addProduct', (productData) => {
-        newProducts[socket.id] = product.addProduct(productData);
-        io.emit('productAdded', newProducts);
-        
+    socket.on('addProduct', async (productData) => {
+        const newProduct = await product.addProduct(productData);
+        console.log('producto agregado');
+        io.emit('productAdded', newProduct);
     });
 
-    socket.on('removeProduct', () => {
-        const removeProduct = newProducts[socket.id];
-        delete newProducts[socket.id];
-        io.emit('productRemoved', removeProduct);
+    socket.on('removeProduct', async (id) => {
+        const products = await product.getProducts();
+        const productToRemove = products.find(product => product._id === parseInt(id));
+        const productsUpdated = products.filter(product => product._id !== parseInt(productToRemove._id));
+        product.writeProduct(productsUpdated);
+        console.log('producto eliminado');
+        io.emit('productRemoved', productToRemove);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
     });
 
 });

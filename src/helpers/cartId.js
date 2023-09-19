@@ -7,7 +7,6 @@ async function cartId() {
       const carts = JSON.parse(data);
   
       const lastCart= carts[carts.length - 1];
-      console.log(lastCart)
       const lastId = lastCart ? lastCart.id : 0;
   
 
@@ -23,33 +22,4 @@ async function cartId() {
     }
   }
 
-  module.exports = cartId
-
-//   class IdGenerator {
-//     constructor() {
-//       this.currentId = 0;
-//     }
-  
-//     async generateUniqueId() {
-//       try {
-       
-//         const data = await fs.readFile("./cart.json", "utf-8");
-//         const carts = JSON.parse(data);
-  
-//         this.currentId += 1;
-  
-//         let newId;
-//         do {
-//           newId = this.currentId;
-//           this.currentId += 1;
-//         } while (carts.some(cart => cart.id === newId));
-
-//         return newId;
-//       } catch (error) {
-//         console.error("Error al generar ID único", error);
-//         throw error;
-//       }
-//     }
-//   }
-  
-//   module.exports = IdGenerator
+  module.exports = cartId;

@@ -5,21 +5,21 @@ const {CartManager} = require("../services/cartService.js");
 const carts = new CartManager();
 
 router.get("/", async (req, res) => {
-    res.send(await carts.readCart())
-})
+    res.send(await carts.readCart());
+});
 
 router.get("/:id", async (req, res) => {
-    res.send(await carts.getCartById(req.params.id))
-})
+    res.send(await carts.getCartById(req.params.id));
+});
 
 router.post("/", async (req, res) => {
-    res.send(await carts.addCart())
-})
+    res.send(await carts.addCart());
+});
 
 router.patch ("/:cid/products/:pid", async (req, res) => {
     const cartId = parseInt(req.params.cid);
     const productId = parseInt(req.params.pid);
     res.send(await carts.addProductCarts(cartId, productId));
-})
+});
 
-module.exports = router   
+module.exports = router;   

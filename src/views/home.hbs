@@ -38,7 +38,7 @@
 
     {{#each products}}
 
-    <tr>
+    <tr id="product-{{this._id}}">
 
       <td>{{this._id}}</td>
 
@@ -56,7 +56,7 @@
 
       <td>{{this.category}}</td>
 
-      <td><button id="delete-button" type="button">Delete</button></td>
+      <td><button id="{{this._id}}" type="button" class="button-delete">Delete</button></td>
 
     </tr>
 
@@ -64,7 +64,8 @@
 
   </table>
 
-  <script src="/scripts.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/delete-script.js"></script>
 
 </body>
 
