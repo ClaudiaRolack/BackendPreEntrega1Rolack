@@ -1,4 +1,4 @@
-{{!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,36 +9,27 @@
 
 <body>
 
-    <h1>Products</h1>
+    <div id="newProduct">
 
-    <ul id="product-list">
-        <li id="title"></li>
-        <li id="description"></li>
-        <li id="price"></li>
-        <li id="code"></li>
-        <li id="stock"></li>
-        <li id="category"></li>
-    </ul>
+        <h1>New product</h1>
+
+        <form id="product-form">
+            <input type="text" id="product" placeholder="title" requiered>
+            <input type="text" id="product" placeholder="description" requiered>
+            <input type="text" id="product" placeholder="price" required>
+            <input type="text" id="product" placeholder="code" required>
+            <input type="text" id="product" placeholder="stock" required>
+            <input type="text" id="product" placeholder="status" required>
+            <input type="text" id="product" placeholder="category" required>
+            <button type="submit">Crear</button>
+        </form>
+
+    </div>
+
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/scripts.js"></script>
 
 </body>
 
-</html> --}}
-
-
-
-
-{{!-- <div id="products-list">
-    <h1>Products</h1>
-    <form id="category-form">
-        <input type="text" id="title" required>
-        <input type="text" id="description" required>
-        <input type="text" id="price" required>
-        <input type="text" id="code" required>
-        <input type="text" id="stock" required>
-        <input type="text" id="category" required>
-        <button type="submit">Crear</button>
-    </form>
-</div> --}}
+</html>

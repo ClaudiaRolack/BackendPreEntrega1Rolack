@@ -1,21 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ListProducts</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ListProducts</title>
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
 
-    <h1>ListProducts</h1>
+  <h1>ListProducts</h1>
 
-  <ul>
+  <table>
 
-    {{#each product}}
-      <li>{{product.title}}</li>
+    <tr>
+
+      <th>id</th>
+
+      <th>Title</th>
+
+      <th>Description</th>
+
+      <th>Price</th>
+
+      <th>code</th>
+
+      <th>stock</th>
+
+      <th>status</th>
+
+      <th>Category</th>
+
+      <th>Delete</th>
+
+    </tr>
+
+    {{#each products}}
+
+    <tr>
+
+      <td>{{this._id}}</td>
+
+      <td>{{this.title}}</td>
+
+      <td>{{this.description}}</td>
+
+      <td>{{this.price}}</td>
+
+      <td>{{this.code}}</td>
+
+      <td>{{this.stock}}</td>
+
+      <td>{{this.status}}</td>
+
+      <td>{{this.category}}</td>
+
+      <td><button id="delete-button" type="button">Delete</button></td>
+
+    </tr>
+
     {{/each}}
-    
-  </ul>
-    
+
+  </table>
+
+  <script src="/scripts.js"></script>
+
 </body>
+
 </html>
