@@ -6,7 +6,6 @@ const { Server } = require("socket.io");
 const handlebars = require("express-handlebars");
 const productsRouter = require("./routes/products.router");
 const cartsRouter = require("./routes/carts.router");
-const viewsRouter = require("./routes/views.router");
 const realTimeproducts = require("./routes/realTimeproducts.router");
 const { ProductManager } = require("./services/productService");
 
@@ -34,7 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 //rutas
 app.use("/api/products", productsRouter);
 app.use("/api/cart", cartsRouter);
-app.use("/home", viewsRouter);
 app.use("/realtimeproducts", realTimeproducts);
 
 //configuracion socket.io

@@ -1,5 +1,7 @@
 const socket = io();
 
+const buttons = document.querySelectorAll(".button-delete");
+
 const cleanForm = (inputs) => {
   inputs.forEach((input) => {
     input.value = "";
@@ -46,4 +48,16 @@ document.getElementById("product-form").addEventListener("submit", (e) => {
   cleanForm(inputs);
 
   socket.emit('addProduct', newProduct);
+});
+
+buttons.forEach((button) => {
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    const productId = e.target.id;
+    const productRemove = document.getElementById(`product-${productId}`);
+    if (productRemove) {
+      productRemove.remove();
+    }
+    socket.emit('removeProduct', productId);
+  });
 });

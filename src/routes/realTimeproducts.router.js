@@ -1,8 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const {ProductManager} = require("../services/productService");
 
-router.get('/', (req, res) => {
-    res.render('realTimeproducts.hbs');
+const product = new ProductManager();
+
+router.get("/", async (req, res) => {
+    let allProducts = await product.getProducts();
+    
+    res.render("realTimeproducts.hbs",{
+        products : allProducts
+    });
 });
 
 
