@@ -46,6 +46,12 @@ io.on('connection', (socket) => {
         io.emit('productAdded', newProduct);
     });
 
+    socket.on('getProducts', async () => {
+        const products = await product.getProducts();
+        console.log('Productos obtenidos')
+        io.emit('gotProducts', products);
+    })
+
     socket.on('removeProduct', async (id) => {
         const products = await product.getProducts();
         const productToRemove = products.find(product => product._id === parseInt(id));
