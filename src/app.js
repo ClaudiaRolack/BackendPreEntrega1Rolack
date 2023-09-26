@@ -36,33 +36,33 @@ app.use("/api/cart", cartsRouter);
 app.use("/realtimeproducts", realTimeproducts);
 
 //configuracion socket.io
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
 
-    console.log('a user connected');
+    console.log("a user connected");
 
-    socket.on('addProduct', async (productData) => {
+    socket.on("addProduct", async (productData) => {
         const newProduct = await product.addProduct(productData);
-        console.log('producto agregado');
-        io.emit('productAdded', newProduct);
+        console.log("producto agregado");
+        socket.emit("productAdded", newProduct);
     });
 
-    socket.on('getProducts', async () => {
+    socket.on("getProducts", async () => {
         const products = await product.getProducts();
-        console.log('Productos obtenidos')
-        io.emit('gotProducts', products);
-    })
+        console.log("Productos obtenidos");
+        socket.emit("gotProducts", products);
+    });
 
-    socket.on('removeProduct', async (id) => {
+    socket.on("removeProduct", async (id) => {
         const products = await product.getProducts();
-        const productToRemove = products.find(product => product._id === parseInt(id));
-        const productsUpdated = products.filter(product => product._id !== parseInt(productToRemove._id));
+        const productToRemove = products.find((product) => product._id === parseInt(id));
+        const productsUpdated = products.filter((product) => product._id !== parseInt(productToRemove._id));
         product.writeProduct(productsUpdated);
-        console.log('producto eliminado');
-        io.emit('productRemoved', productToRemove);
+        console.log("producto eliminado");
+        socket.emit("productRemoved", productToRemove);
     });
 
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
+    socket.on("disconnect", () => {
+        console.log("user disconnected");
     });
 
 });

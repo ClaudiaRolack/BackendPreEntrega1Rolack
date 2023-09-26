@@ -29,7 +29,7 @@ const prepareList = () => {
     .then((products) => {
 
       const elementosConClase = document.querySelectorAll(".product-flag");
-
+      
       elementosConClase.forEach((elemento) => {
         elemento.remove();
       });
