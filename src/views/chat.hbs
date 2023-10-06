@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+</head>
+
+<body>
+
+    <div id="username-form-container">
+        <h1>Mensaje</h1>
+        <form id="username-form" action="/api/message" method="POST">
+            <input type="text" id="username" name="user" placeholder="Usuario" required>
+            <input type="text" id="message" name="message" placeholder="Mensaje" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script src="/src/public/chat.js"></script>
+
+</body>
+
+</html>

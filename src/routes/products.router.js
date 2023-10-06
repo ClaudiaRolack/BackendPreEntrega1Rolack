@@ -1,38 +1,43 @@
-const express = require("express");
-const router = express.Router();
-const {ProductManager} = require("../services/productService.js");
-
-const product = new ProductManager();
+const { Router } = require("express");
+const { productsModel } = require("../models/products.model");
+const router = Router();
 
 router.get("/", async (req, res) => {
-    let limit = parseInt(req.query.limit);
-    if(!limit) return res.send(await product.getProducts());
-    let allProducts = await product.getProducts();
-    let productLimit = allProducts.slice(0, limit);
-    res.send(productLimit);   
-});
-
-router.get("/:id", async (req, res) => {
-    let id = parseInt(req.params.id);
-    res.send(await product.getProductsById(id));
-});
-
-router.put("/:id", async (req, res) => {
-    let id = parseInt(req.params.id);
-    let updateProduct = req.body;
-    res.send(await product.updateProducts(id, updateProduct));
+    try {
+        let products = await productsModel.find();
+        res.send({ result: "success", payload: products });
+    } catch (error) {
+        console.log(error);
+    };
 });
 
 router.post("/", async (req, res) => {
-    const newProduct = req.body;
-    res.send(await product.addProduct(newProduct));
+    let { title, description, price, code, stock } = req.body;
+
+    if (!title || !description || !price || !code || !stock) {
+        res.send({ status: "error", error: "Faltan datos" });
+    } else {
+        let result = await productsModel.create({ title, description, price, code, stock });
+        res.send({ result: "success", payload: result });
+    }
 });
 
-router.delete("/:id", async (req, res) => {
-    let id = parseInt(req.params.id); 
-    res.send(await product.deleteProducts(id));
+router.put("/:pid", async (req, res) => {
+    let { pid } = req.params;
+    let productsToReplace = req.body;
+
+    if (!productsToReplace.title || !productsToReplace.description || !productsToReplace.price || !productsToReplace.code || !productsToReplace.stock) {
+        res.send({ status: "error", error: "No hay datos en parametros" });
+    } else {
+        let result = await productsModel.updateOne({ _id: pid }, productsToReplace);
+        res.send({ result: "success", payload: result });
+    };
 });
 
+router.delete("/:pid", async (req, res) => {
+    let { pid } = req.params;
+    let result = await productsModel.deleteOne({ _id: pid });
+    res.send({ result: "success", payload: result });
+});
 
-
-module.exports = router;
+module.exports = router

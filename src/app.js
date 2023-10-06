@@ -1,12 +1,14 @@
 const express = require("express");
+const mongoose  = require("mongoose")
 const http = require("http");
 const socketIo = require("socket.io");
+const Swal = require('sweetalert2');
 const path = require("path");
 const { Server } = require("socket.io");
 const handlebars = require("express-handlebars");
-const productsRouter = require("./routes/products.router");
 const cartsRouter = require("./routes/carts.router");
-const realTimeproducts = require("./routes/realTimeproducts.router");
+const messageRouter = require("./routes/message.router");
+const productsRouter = require("./routes/products.router");
 const { ProductManager } = require("./services/productService");
 
 const product = new ProductManager();
@@ -31,45 +33,25 @@ app.use(express.static(__dirname, + "/views"));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //rutas
-app.use("/api/products", productsRouter);
 app.use("/api/cart", cartsRouter);
-app.use("/realtimeproducts", realTimeproducts);
+app.use("/api/message", messageRouter);
+app.use("/api/products", productsRouter);
 
-//configuracion socket.io
-io.on("connection", (socket) => {
-
-    console.log("a user connected");
-
-    socket.on("addProduct", async (productData) => {
-        const newProduct = await product.addProduct(productData);
-        console.log("producto agregado");
-        socket.emit("productAdded", newProduct);
-    });
-
-    socket.on("getProducts", async () => {
-        const products = await product.getProducts();
-        console.log("Productos obtenidos");
-        socket.emit("gotProducts", products);
-    });
-
-    socket.on("removeProduct", async (id) => {
-        const products = await product.getProducts();
-        const productToRemove = products.find((product) => product._id === parseInt(id));
-        const productsUpdated = products.filter((product) => product._id !== parseInt(productToRemove._id));
-        product.writeProduct(productsUpdated);
-        console.log("producto eliminado");
-        socket.emit("productRemoved", productToRemove);
-    });
-
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-    });
-
+app.get("/", async (req, res) => {
+    res.render("chat.hbs", {title: "Chat"});
 });
-
 
 //server
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
     console.log(`Servidor escuhando por el puerto ${PORT}`);
+});
+
+//configuracion Mongoose
+mongoose.connect("mongodb+srv://claudiaRolack:177022023007@cluster0.pfb4dhv.mongodb.net/?retryWrites=true&w=majority")
+.then (() => {
+    console.log("Conectado a la base de datos")
+})
+.catch (error => {
+    console.log("Error al intentar conectarse a la BD", error)
 });
