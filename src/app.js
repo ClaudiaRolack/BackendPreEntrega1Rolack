@@ -9,6 +9,7 @@ const handlebars = require("express-handlebars");
 const cartsRouter = require("./routes/carts.router");
 const messageRouter = require("./routes/message.router");
 const productsRouter = require("./routes/products.router");
+const multerRouter = require("./routes/multer.router")
 const { ProductManager } = require("./services/productService");
 
 const product = new ProductManager();
@@ -36,8 +37,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use("/api/cart", cartsRouter);
 app.use("/api/message", messageRouter);
 app.use("/api/products", productsRouter);
+app.use("/", multerRouter);
 
-app.get("/", async (req, res) => {
+app.get("/chat", async (req, res) => {
     res.render("chat.hbs", {title: "Chat"});
 });
 

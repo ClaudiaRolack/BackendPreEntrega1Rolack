@@ -12,7 +12,7 @@ document.getElementById("username-form").addEventListener("submit", async (e) =>
             method: "POST",
             headers: { "Content-Type": "application/json", },
             body: JSON.stringify({user, message}),
-        })
+        });
 
         if(response.ok) {
             const responseData = await response.json();
@@ -27,10 +27,11 @@ document.getElementById("username-form").addEventListener("submit", async (e) =>
                 if(result.isConfirmed){
                     location.reload();
                 }
-            })
+            });
 
             userInputElement.value = "";
             messageInputElement.value = "";
+
         } else {
             console.error("Error al enviar el mensaje");
         }
