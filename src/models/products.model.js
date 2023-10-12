@@ -12,4 +12,4 @@ const productsSchema = new mongoose.Schema({
 
 const productsModel = mongoose.model(productsCollection, productsSchema)
 
-module.exports = { productsModel }
+module.exports =  { productsModel }  

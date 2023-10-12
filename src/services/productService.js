@@ -1,5 +1,7 @@
 const fs = require("fs").promises;
 const getNextId = require("../helpers/getNextId.js");
+const mongoose = require("mongoose");
+const { productsModel } = require("../models/products.model.js");
 
 class Product {
     constructor(productData, id) {
@@ -68,6 +70,39 @@ class ProductManager {
         let products = [{ ...product, id: id }, ...productOld];
         await this.writeProduct(products);
         return "Producto actualizado";
+    };
+
+    getProductsByLimit = async (limit) => {
+        try {
+            const products = await productsModel.find().limit(limit);
+            if (products.length < limit) { limit = products.length; }
+            return products;
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    getProductsByPage = async (page, productsPerPage) => {
+        if (page <= 0) { page = 1; }
+        try {
+            const products = await productsModel.find()
+                .skip((page - 1) * productsPerPage)
+                .limit(productsPerPage);
+            return products;
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    getProductsByQuery = async (query) => {
+        try{
+            const products = await products.find({
+                description: {$regex: query, $options: 'i'}
+            });
+        } catch (error) {
+            throw error;
+        };
+
     };
 
     deleteProducts = async (id) => {
