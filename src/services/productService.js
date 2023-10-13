@@ -52,9 +52,7 @@ class ProductManager {
     };
 
     getProductsById = async (id) => {
-
         let productById = await this.exist(id);
-
         if (!productById) {
             return "El ID no existe";
         } else {
@@ -79,7 +77,7 @@ class ProductManager {
             return products;
         } catch (error) {
             throw error;
-        }
+        };
     };
 
     getProductsByPage = async (page, productsPerPage) => {
@@ -91,24 +89,35 @@ class ProductManager {
             return products;
         } catch (error) {
             throw error;
-        }
+        };
     };
 
     getProductsByQuery = async (query) => {
-        try{
-            const products = await products.find({
-                description: {$regex: query, $options: 'i'}
+        try {
+            const products = await productsModel.find({
+                title: { $regex: query, $options: 'i' }
             });
+            if (products.length === 0) { return []; }
+            return products;
         } catch (error) {
             throw error;
         };
+    };
 
+    getProducstBySort = async (sortOrder) => {
+        try {
+            const products = await productsModel.find().sort({ 
+                price: sortOrder 
+            }); 
+            return products;
+        } catch (error) {
+            throw error;
+        };
     };
 
     deleteProducts = async (id) => {
         let products = await this.readProduct();
         let existProduct = products.some(product => product._id === id);
-
         if (existProduct) {
             let productFilter = products.filter(product => product._id != id);
             await this.writeProduct(productFilter);

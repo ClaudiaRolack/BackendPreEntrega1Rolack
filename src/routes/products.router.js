@@ -52,17 +52,49 @@ router.get("/limit/:limit", async (req, res) => {
 
 router.get("/page/:page", async (req, res) => {
     let page = parseInt(req.params.page);
-    if (isNaN(page) || page <= 0) {
-        page = 1;
-    }
-    const productsPerPage = 5; 
+    if (isNaN(page) || page <= 0) { page = 1; }
+    const productsPerPage = 5;
     const products = await productManager.getProductsByPage(page, productsPerPage);
     res.send({ result: "success", payload: products });
 });
 
 router.get("/buscar/query", async (req, res) => {
     const query = req.query.q;
-    res.send(await productsModel.getProductsByQuery(query));
+    try {
+        const products = await productManager.getProductsByQuery(query);
+        if (products.length === 0) {
+            res.send({ result: "success", message: "No se encontraron productos" });
+        } else {
+            res.send({ result: "success", payload: products });
+        }
+    } catch (error) {
+        throw error;
+    };
+});
+
+router.get("/ordenar/sort", async (req, res) => {
+    let sortOrder = 0;
+    if (req.query.sort) {
+        if (req.query.sort === "desc") {
+            sortOrder = -1;
+        }
+    }
+    res.send(await productManager.getProducstBySort(sortOrder))
+});
+
+router.get("/ordenar/sort", async (req, res) => {
+    let sortOrder = 0 
+    if (req.query.sort) {
+        if (req.query.sort === "desc") {
+            sortOrder = -1;
+        }
+    }
+    try {
+        const products = await productManager.getProducstBySort(sortOrder);
+        res.send({ result: "success", payload: products });
+    } catch (error) {
+        throw error;
+    };
 });
 
 router.delete("/:pid", async (req, res) => {
