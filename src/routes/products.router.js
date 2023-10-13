@@ -73,16 +73,6 @@ router.get("/buscar/query", async (req, res) => {
 });
 
 router.get("/ordenar/sort", async (req, res) => {
-    let sortOrder = 0;
-    if (req.query.sort) {
-        if (req.query.sort === "desc") {
-            sortOrder = -1;
-        }
-    }
-    res.send(await productManager.getProducstBySort(sortOrder))
-});
-
-router.get("/ordenar/sort", async (req, res) => {
     let sortOrder = 0 
     if (req.query.sort) {
         if (req.query.sort === "desc") {
