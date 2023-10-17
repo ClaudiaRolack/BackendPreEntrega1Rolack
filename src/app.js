@@ -53,4 +53,4 @@ mongoose.connect("mongodb+srv://claudiaRolack:177022023007@cluster0.pfb4dhv.mong
 })
 .catch (error => {
     console.log("Error al intentar conectarse a la BD", error)
-});
+})

@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const { CartManager } = require("../services/cartService");
 const {cartsModel} = require("../models/carts.model");
+
+const cartManager = new CartManager();
 
 router.get("/", async (req, res) => {
     try {
@@ -11,33 +14,39 @@ router.get("/", async (req, res) => {
     };
 });
 
-router.post("/", async (req, res) => {
-    let { title, price, quantity, total } = req.body;
+router.get("/population/:cid", async (req, res) => {
+    let cartId = req.params.cid;
+    res.send(await cartManager.getCartWithProducts(cartId));
+});
 
-    if (!title || !price || !quantity || !total) {
-        res.send({ status: "error", error: "Faltan datos" });
-    } else {
-        let result = await cartsModel.create({ title, price, quantity, total });
-        res.send({ result: "success", payload: result });
-    }
+router.post("/", async (req, res) => {
+    let newProduct = req.body;
+    res.send(await cartManager.addCart(newProduct))
 });
 
 router.put("/:cid", async (req, res) => {
-    let { cid } = req.params;
-    let cartsToReplace = req.body;
-
-    if (!cartsToReplace.title || !cartsToReplace.price || !cartsToReplace.quantity || !cartsToReplace.total) {
-        res.send({ status: "error", error: "No hay datos en parametros" });
-    } else {
-        let result = await cartsModel.updateOne({ _id: cid }, cartsToReplace);
-        res.send({ result: "success", payload: result });
-    };
+    let cartId = req.params.cid;
+    let newProducts = req.body;
+    res.send(await cartManager.updateProductsInCart(cartId, newProducts));
 });
 
+router.put("/:cid/products/:pid", async (req, res) => {
+    let cartId = req.params.cid;
+    let prodId = req.params.pid;
+    let newProduct = req.body;
+    res.send(await cartManager.updateProductInCart(cartId, prodId, newProduct));
+}); 
+
+router.delete("/:cid/products/:pid", async (req, res) => {
+    let cartId = req.params.cid;
+    let prodId = req.params.pid; 
+    res.send(await cartManager.removeProductFromCart(cartId, prodId));
+});
+
+
 router.delete("/:cid", async (req, res) => {
-    let { cid } = req.params;
-    let result = await cartsModel.deleteOne({ _id: cid });
-    res.send({ result: "success", payload: result });
+    let cartId = req.params.cid;
+    res.send(await cartManager.removeAllProductsFromCart(cartId));
 });
 
 module.exports = router
