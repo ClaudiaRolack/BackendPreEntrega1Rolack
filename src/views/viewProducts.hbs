@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div>
+        <h3>Bienvenido/a {{email}}</h3>
+        <p>Rol: {{rol}}</p>
+        <h4><a href="/api/sessions/logout">Cerrar sesión</a></h4>
+        <H1>Lista de productos con Handlebars</H1>
+        <div>
+            {{#each products}}
+            <div>
+                <h2>{{this.title}}</h2>
+                <p>Precio: ${{this.price}}</p>
+                <a href="/api/products/{{this._id}}">Ver detalle</a>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -18,14 +18,9 @@ router.get("/", async (req, res) => {
 
         const queryObject = {};
 
-        if (query) { queryObject.title = { $regex: query, $options: 'i' };
-        }
-
-        if (category) { queryObject.category = category;
-        }
-
-        if (availability) { queryObject.availability = availability;
-        }
+        if (query) { queryObject.title = { $regex: query, $options: 'i' }; }
+        if (category) { queryObject.category = category; }
+        if (availability) { queryObject.availability = availability; }
 
         const options = {
             page: page,
@@ -49,6 +44,18 @@ router.get("/", async (req, res) => {
         throw error;
     }
 });
+
+router.get("/:id", async (req, res) => { //no funciona
+    try {
+        const prodId = req.params.id;
+        const productDetail = await productManager.getProductsById(prodId);
+        res.render("viewDeatils", { product: productDetail });
+    } catch (error) {
+        console.error("Error al obetner el producto:", error);
+        return "Error al obetner el producto";
+    };
+});
+
 router.post("/", async (req, res) => {
     try {
         let { title, description, category, price, code, stock, availability } = req.body;
@@ -57,9 +64,7 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ status: "error", error: "Faltan datos obligatorios" });
         }
 
-        if (stock === undefined) {
-            stock = 0;
-        }
+        if (stock === undefined) { stock = 0; }
 
         if (availability !== "inStock" && availability !== "outOfStock") {
             return res.status(400).json({ status: "error", error: "El valor de disponibilidad es inválido" });

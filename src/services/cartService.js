@@ -28,32 +28,35 @@ class CartManager {
         return carts.filter(cart => cart.id === id);
     };
 
-    addCart = async () => {
-        let cartOld = await this.readCart();
-        let id = await cartId();
-        let cartConcat = [...cartOld, { id: id, products: [] }];
-        await this.writeCart(cartConcat);
-        return "Carrito agregado";
+    addCart = async (newProduct) => {
+        try {
+            const newCart = new cartsModel(newProduct);
+            const savedCart = await newCart.save();
+            return savedCart;
+        } catch (error) {
+            console.error('Error al agregar el carrito:', error);
+            throw error;
+        }
     };
 
     getCarts = async () => {
         try {
-            const carts = await CartManager.find({})
-            .populate({
-                path: "products.productId",
-                model: "products",
-                select: "title, description, price, stock"
-            });
+            const carts = await cartsModel.find({})
+                .populate({
+                    path: "products.productId",
+                    model: "products",
+                    select: "title, description, price, stock"
+                });
             return carts;
         } catch (error) {
             console.error("Error al obetener los carritos:", error);
-            return "Error al obetener los carritos;"
+            return [];
         };
     };
 
     getCartWithProducts = async (cartId) => {
         try {
-            const carts = await cartsModel.findById(cartId).populate("products.productsId").lean();
+            const carts = await cartsModel.findById(cartId).populate("products.productId").lean();
             console.log(cartId)
             if (!carts) {
                 return "Carrito no encontrado";
@@ -66,13 +69,14 @@ class CartManager {
         };
     };
 
-    updateProductsInCart = async (cartId, newProducts) => {
+    updateProductsInCart = async (cartId, newProduct) => { //no funciona
         try {
             const carts = await cartsModel.findById(cartId);
+            console.log(carts)
             if (!carts) {
                 return "Carrito no encontrado";
             }
-            carts.products = newProducts;
+            carts.products = newProduct;
 
             await carts.save();
             return "Carrito actualizado con nuevos productos";
@@ -82,7 +86,7 @@ class CartManager {
         };
     };
 
-    updateProductInCart = async (cartId, prodId, newProduct) => {
+    updateProductInCart = async (cartId, prodId, newProduct) => { //perguntar Vitoco
         try {
             const carts = await cartsModel.findById(cartId);
             if (!carts) {
@@ -94,7 +98,7 @@ class CartManager {
                 return "Producto no encontrado en el carrito";
             };
 
-            Object.assign(productToUpdate, updatedProduct);
+            Object.assign(productToUpdate, newProduct);
             await carts.save()
         } catch (error) {
             console.error("Error al actualizar el producto en el carrito:", error);
@@ -102,14 +106,15 @@ class CartManager {
         };
     };
 
-    removeProductFromCart = async (cartId, prodId) => {
+    removeProductFromCart = async (cartId, prodId) => { //no funciona
         try {
             const carts = await cartsModel.findById(cartId);
             if (!carts) {
                 return "Carrito no encontrado";
             };
 
-            const productIndex = cart.products.findeIndex((product) => product.productId === prodId);
+            const productIndex = carts.products.findById((product) => product.productId === prodId);
+
             if (productIndex !== -1) {
                 carts.products.splice(productIndex, 1);
                 await carts.save();
@@ -123,7 +128,7 @@ class CartManager {
         };
     };
 
-    removeAllProductsFromCart = async () => {
+    removeAllProductsFromCart = async () => { //no funciona
         try {
             const carts = await cartsModel.findById(cartId);
             if (!carts) {

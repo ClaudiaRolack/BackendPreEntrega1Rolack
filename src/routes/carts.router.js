@@ -7,8 +7,8 @@ const cartManager = new CartManager();
 
 router.get("/", async (req, res) => {
     try {
-        let carts = await cartsModel.find();
-        res.send({ result: "success", payload: carts });
+        let cartData = await cartsModel.find();
+        res.send({ result: "success", payload: cartData });
     } catch (error) {
         console.log(error);
     };
@@ -26,8 +26,8 @@ router.post("/", async (req, res) => {
 
 router.put("/:cid", async (req, res) => {
     let cartId = req.params.cid;
-    let newProducts = req.body;
-    res.send(await cartManager.updateProductsInCart(cartId, newProducts));
+    let newProduct = req.body;
+    res.send(await cartManager.updateProductsInCart(cartId, newProduct));
 });
 
 router.put("/:cid/products/:pid", async (req, res) => {
