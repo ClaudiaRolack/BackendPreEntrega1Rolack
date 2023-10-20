@@ -1,7 +1,8 @@
 const express = require("express");
-const { router } = require("express");
-const UserManager = require("../services/userService");
+const { Router } = require("express");
+const { UserManager } = require("../services/userService");
 
+const router = Router();
 const userManager = new UserManager();
 
 router.get("/login", async(req, res) => {
