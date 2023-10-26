@@ -60,6 +60,13 @@ class ProductManager {
         };
     };
 
+    getProductsByPid = async (id) => {
+        let product = await productsModel.findById(id)
+        console.log(product)
+        return product;
+
+    };
+
     updateProducts = async (id, product) => {
         let productById = await this.exist(id);
         if (!productById) return "Producto no encontrado";

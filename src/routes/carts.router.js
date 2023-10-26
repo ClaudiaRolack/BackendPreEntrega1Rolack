@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { CartManager } = require("../services/cartService");
-const {cartsModel} = require("../models/carts.model");
+const { cartsModel } = require("../models/carts.model");
 
 const cartManager = new CartManager();
 
@@ -35,11 +35,11 @@ router.put("/:cid/products/:pid", async (req, res) => {
     let prodId = req.params.pid;
     let newProduct = req.body;
     res.send(await cartManager.updateProductInCart(cartId, prodId, newProduct));
-}); 
+});
 
 router.delete("/:cid/products/:pid", async (req, res) => {
     let cartId = req.params.cid;
-    let prodId = req.params.pid; 
+    let prodId = req.params.pid;
     res.send(await cartManager.removeProductFromCart(cartId, prodId));
 });
 

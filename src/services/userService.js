@@ -1,6 +1,7 @@
 const fs = require("fs").promises;
 const getNextId = require("../helpers/getNextId");
 const userModel = require("../models/user.model.js")
+const cartsModel = require("../models/carts.model.js")
 
 class UserManager extends userModel {
 
@@ -10,7 +11,12 @@ class UserManager extends userModel {
 
     addUser = async (userData) => {
         try {
-            await userModel.create(userData);
+            const newUser = await userModel.create(userData);
+            const newCart = await cartsModel.create({ products: [] })
+            console.log(newCart)
+            newUser.cart = newCart._id
+            
+            await newUser.save()
             return "Usuario agregado";
         } catch (error) {
             console.error("Error al agregar el usuario:", error);

@@ -45,16 +45,16 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => { //no funciona
-    try {
-        const prodId = req.params.id;
-        const productDetail = await productManager.getProductsById(prodId);
-        res.render("viewDeatils", { product: productDetail });
-    } catch (error) {
-        console.error("Error al obetner el producto:", error);
-        return "Error al obetner el producto";
-    };
-});
+// router.get("/:id", async (req, res) => { //no funciona
+//     try {
+//         const prodId = req.params.id;
+//         const productDetail = await productManager.getProductsById(prodId);
+//         res.render("viewDeatils", { product: productDetail });
+//     } catch (error) {
+//         console.error("Error al obetner el producto:", error);
+//         return "Error al obetner el producto";
+//     };
+// });
 
 router.post("/", async (req, res) => {
     try {

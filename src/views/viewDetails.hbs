@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dettale del producto</title>
 </head>
+
 <body>
-    
+
     <div>
         <h1>Detalle</h1>
         <a href="/products">Volver</a>
@@ -19,10 +21,46 @@
             <p>Stock: {{product.stock}}</p>
             <p>Disponibilidad: {{product.availability}}</p>
             <p>ID: {{product._id}}</p>
-            <button>Agregar al Carrito</button>
+            <button class="agregar-carrito" data-product-id="{{product._id}}" data-cart-id="{{cartId}}">Agregar al
+                Carrito</button>
         </div>
 
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const botonAgregarCarrito = document.querySelector('.agregar-carrito');
+            const productId = botonAgregarCarrito.getAttribute('data-product-id');
+            const cartId = botonAgregarCarrito.getAttribute('data-cart-id');
+
+            botonAgregarCarrito.addEventListener('click', function () {
+                agregarProductoAlCarrito(productId, 1, cartId);
+            });
+
+            function agregarProductoAlCarrito(productId, quantity, cartId) {
+                const data = { productId: productId, quantity: quantity };
+
+                fetch(`/api/cart/${cartId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(function (response) {
+                        if (response.ok) {
+                            console.log('Producto agregado al carrito');
+                        } else {
+                            console.error('Error al agregar el producto al carrito');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error en la solicitud:', error);
+                    });
+            }
+        });
+    </script>
+
 </body>
+
 </html>

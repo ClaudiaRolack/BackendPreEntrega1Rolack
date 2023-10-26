@@ -12,18 +12,59 @@
     <div>
         <h3>Bienvenido/a {{email}}</h3>
         <p>Rol: {{rol}}</p>
+        <p id="cart-id" data-cart-id="{{cartId}}">CartId: {{cartId}}</p>
         <h4><a href="/api/sessions/logout">Cerrar sesión</a></h4>
+        <h4><a href="/carts/{{cartId}}">Carrito</a></h4>
         <H1>Lista de productos con Handlebars</H1>
+        <p>{{cartId}}</p>
         <div>
             {{#each products}}
             <div>
                 <h2>{{this.title}}</h2>
-                <p>Precio: ${{this.price}}</p>
-                <a href="/api/products/{{this._id}}">Ver detalle</a>
+                <p>Precio: $ {{this.price}}</p>
+                <a href="/details/{{this._id}}">Ver detalle</a>
+                <button class="agregar-carrito" data-product-id="{{this._id}}">Agregar al Carrito</button>
             </div>
             {{/each}}
+
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const botonesAgregarCarrito = document.querySelectorAll('.agregar-carrito');
+            const cartId = document.getElementById("cart-id").getAttribute("data-cart-id");
+
+            botonesAgregarCarrito.forEach(function (boton) {
+                boton.addEventListener('click', function () {
+                    const productId = boton.getAttribute('data-product-id');
+                    agregarProductoAlCarrito(productId, 1, cartId);
+                });
+            });
+
+            function agregarProductoAlCarrito(productId, quantity, cartId) {
+                const data = { productId: productId, quantity: quantity }
+
+                fetch(`/api/cart/${cartId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data) 
+                })
+                    .then(function (response) {
+                        if (response.ok) {
+                            console.log('Producto agregado al carrito');
+                        } else {
+                            console.error('Error al agregar el producto al carrito');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error en la solicitud:', error);
+                    });
+            }
+        });
+    </script>
 
 </body>
 

@@ -17,7 +17,7 @@ router.get("/login", async(req, res) => {
 router.post("/register", (req, res) => {
     try {
         let newUser = req.body
-        user.addUser(newUser)
+        userManager.addUser(newUser)
         res.redirect("/login")
     } catch (error) {
         console.log("Error de resgistro:", error);
@@ -40,6 +40,8 @@ router.post("/login", async (req, res) => {
             } else {
                 req.session.emailUsuario = email
                 req.session.rolUsuario = data.rol
+                req.session.cartId = data.cart
+                console.log(data.cart)
                 res.redirect("/products")
             }
         } else {
