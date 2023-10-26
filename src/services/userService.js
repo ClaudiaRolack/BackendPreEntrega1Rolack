@@ -13,7 +13,6 @@ class UserManager extends userModel {
         try {
             const newUser = await userModel.create(userData);
             const newCart = await cartsModel.create({ products: [] })
-            console.log(newCart)
             newUser.cart = newCart._id
             
             await newUser.save()
@@ -65,9 +64,7 @@ class UserManager extends userModel {
     validateUser = async (param) => {
         try {
             const user = await UserManager.findOne({ email: param });
-            if (!user) {
-                return "Usuario no encontrado"
-            }
+            if (!user) { return "Usuario no encontrado" }
             return user;
         } catch (error) {
             console.error("Error al validar usuario:", error)

@@ -66,6 +66,7 @@ app.use("/api/cart", cartsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/sessions", userRouter)
 
+//vistas
 app.get("/products", async (req, res) => {
     if (!req.session.emailUsuario) {
         return res.redirect("/login")
@@ -109,6 +110,7 @@ app.get("/products", async (req, res) => {
     });
 });
 
+//implementacion del login
 app.get("/login", async (req, res) => {
     res.render("login.hbs", {
         title: "Login"
