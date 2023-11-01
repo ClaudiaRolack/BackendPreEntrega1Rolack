@@ -1,7 +1,8 @@
 const fs = require("fs").promises;
 const getNextId = require("../helpers/getNextId");
-const userModel = require("../models/user.model.js")
-const cartsModel = require("../models/carts.model.js")
+const userModel = require("../models/user.model.js");
+const cartsModel = require("../models/carts.model.js");
+const { createHash } = require("../utils");
 
 class UserManager extends userModel {
 
@@ -9,19 +10,26 @@ class UserManager extends userModel {
         super();
     };
 
-    addUser = async (userData) => {
-        try {
-            const newUser = await userModel.create(userData);
-            const newCart = await cartsModel.create({ products: [] })
-            newUser.cart = newCart._id
-            
-            await newUser.save()
-            return "Usuario agregado";
-        } catch (error) {
-            console.error("Error al agregar el usuario:", error);
-            return "Error al agregar el usuario";
+    async addUser(userData) {
+        const { firstName, lastName, email, age, password } = userData;
+
+        const newUser = {
+            firstName,
+            lastName,
+            email,
+            age,
+            password: createHash(password)
         };
-    };
+
+        try {
+            const result = await userModel.create(newUser);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
 
     updateUser = async (id, userData) => {
         try {
@@ -84,7 +92,7 @@ class UserManager extends userModel {
             console.log("Error al eliminar el usuario:", error);
             return "Error al eliminar el usuario";
         }
-    }; 
+    };
 };
 
 module.exports = { UserManager }

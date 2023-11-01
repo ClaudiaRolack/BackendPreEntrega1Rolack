@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose")
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
+const passport = require("passport");
 const FileStore = require("session-file-store");
 const http = require("http");
 const socketIo = require("socket.io");
@@ -14,6 +15,7 @@ const productsRouter = require("./routes/products.router");
 const userRouter = require("./routes/user.router")
 const { ProductManager } = require("./services/productService");
 const { CartManager } = require("./services/cartService");
+const initializePassport = require("./config/passport.config.js");
 
 const app = express();
 
@@ -29,6 +31,8 @@ const io = new Server(server);
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("views engine", "handlebars");
+
+
 
 //middlewars
 app.use(express.json());
@@ -60,6 +64,11 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+//configuracion passport
+initializePassport(passport)
+app.use(passport.initialize())
+app.use(passport.session())
 
 //rutas
 app.use("/api/cart", cartsRouter);

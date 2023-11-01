@@ -13,14 +13,6 @@ const userSchema = new mongoose.Schema({
     cart: { type: mongoose.Schema.Types.ObjectId, ref: "carts" }
 });
 
-userSchema.pre('save', (next) => {
-    if (!this.isModified('password')) {
-        return next();
-    }
-    this.password = createHash(this.password);
-    next();
-});
-
 const userModel = mongoose.model(userCollection, userSchema);
 
 module.exports = userModel

@@ -1,12 +1,13 @@
 const express = require("express");
 const { Router } = require("express");
 const { UserManager } = require("../services/userService");
-const { isValidPassword } = require("../utils.js");
+const passport = require("passport");
+const bcrypt = require('bcrypt');
 
 const router = Router();
 const userManager = new UserManager();
 
-router.get("/login", async(req, res) => {
+router.get("/login", async (req, res) => {
     req.session.destroy((error) => {
         if (error) {
             return res.json({ status: "Logout error", body: error });
@@ -15,23 +16,30 @@ router.get("/login", async(req, res) => {
     });
 });
 
-router.post("/register", (req, res) => {
+router.post("/register", passport.authenticate('register'), (req, res) => {
     try {
         let newUser = req.body
         userManager.addUser(newUser)
         res.redirect("/login")
     } catch (error) {
         console.log("Error de resgistro:", error);
+        res.redirect("/failregister");
         return "Error de resgistro";
     }
 });
 
-router.post("/login", async (req, res) => {
+router.get("/failregister", async (req, res) => {
+    console.log("Falla de registro");
+    res.send({ error: "Falló" })
+});
+
+router.post("/login", passport.authenticate('login'), async (req, res) => {
+
     try {
         let email = req.body.email;
         const data = await userManager.validateUser(email);
 
-        if (data && isValidPassword(data, req.body.password)) {
+        if (data && (await bcrypt.compare(req.body.password, data.password))) {
             if (data.rol === "admin") {
                 req.session.emailUsuario = email;
                 req.session.nombreUsuario = data.firstName;
@@ -52,5 +60,22 @@ router.post("/login", async (req, res) => {
         return "Error al acceder al perfil";
     }
 });
+
+router.get("/logout", async (req, res) => {
+    req.session.destroy((error) => {
+        if (error) { return res.json({ status: "Logout error", body: error }) }
+        res.redirect("../../login")
+    });
+});
+
+router.get("/github", passport.authenticate("github", { scope: [ "user:mail" ] } ), async (req, res) => {})
+
+router.get("/githubcallback", passport.authenticate("github", { failureRedirect: "/login" }), async (req, res) => {
+    req.session.user= req.user
+    req.session.emailUsuario = req.session.user.email
+    req.session.rolUsuario = req.session.user.rol
+    res.redirect("/products")
+});
+
 
 module.exports = router
