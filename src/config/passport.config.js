@@ -1,12 +1,13 @@
 const passport = require("passport");
 const local = require("passport-local");
-const connectMongo = require("connect-mongo");
+const jwt = require("passport-jwt");
 const GitHubStrategy = require("passport-github2");
 const userModel = require("../models/user.model.js");
-const userService = require("../services/userService.js");
-const { createHash, isValidPassword } = require("../utils.js")
+const { isValidPassword } = require("../utils.js")
 
 const localStrategy = local.Strategy;
+const jwtStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
 
 const initializePassport = (passport) => {
     passport.use("/register", new localStrategy(
@@ -87,10 +88,24 @@ const initializePassport = (passport) => {
         }
     }))
 
+    const cookieExtractor = req => {
+        let token = null;
+        if (req && req.cookies) {
+            token = req.cookies["token"]
+        }
+        return token
+    }
+
+    passport.use("jwt", new jwtStrategy({
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: "Secret-key",
+    }, async(jwt_payload, done) => {
+        try {
+            return done(null, jwt_payload);
+        } catch (error) {
+            return done(error)
+        }
+    }))
 };
 
-
-
-
-
-module.exports = initializePassport
+module.exports = { initializePassport, ExtractJWT }

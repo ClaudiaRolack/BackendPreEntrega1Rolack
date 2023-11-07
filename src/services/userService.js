@@ -4,6 +4,7 @@ const userModel = require("../models/user.model.js");
 const cartsModel = require("../models/carts.model.js");
 const { createHash } = require("../utils");
 
+
 class UserManager extends userModel {
 
     constructor() {
@@ -28,8 +29,6 @@ class UserManager extends userModel {
             throw error;
         }
     }
-
-
 
     updateUser = async (id, userData) => {
         try {

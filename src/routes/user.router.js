@@ -1,8 +1,11 @@
 const express = require("express");
 const { Router } = require("express");
-const { UserManager } = require("../services/userService");
 const passport = require("passport");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { UserManager } = require("../services/userService");
+const { passportCall } = require("../utils.js");
+const { authorization } = require("../utils.js")
 
 const router = Router();
 const userManager = new UserManager();
@@ -38,6 +41,11 @@ router.post("/login", passport.authenticate('login'), async (req, res) => {
     try {
         let email = req.body.email;
         const data = await userManager.validateUser(email);
+        const password = data.password
+        const rol = data.rol
+
+        const token = jwt.sign({ email, password, rol }, "Secret-key", { expiresIn: "24h" });
+        res.cookie("token", token, { maxAge: 60 * 60 * 1000, httpOnly: true });
 
         if (data && (await bcrypt.compare(req.body.password, data.password))) {
             if (data.rol === "admin") {
@@ -55,6 +63,7 @@ router.post("/login", passport.authenticate('login'), async (req, res) => {
         } else {
             res.redirect("../../login");
         }
+
     } catch (error) {
         console.error("Error al acceder al perfil:", error);
         return "Error al acceder al perfil";
@@ -75,6 +84,10 @@ router.get("/githubcallback", passport.authenticate("github", { failureRedirect:
     req.session.emailUsuario = req.session.user.email
     req.session.rolUsuario = req.session.user.rol
     res.redirect("/products")
+});
+
+router.get("/current", passportCall("jwt"), authorization("user"), (req, res) => {
+    res.send(req.user)
 });
 
 

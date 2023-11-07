@@ -1,8 +1,9 @@
 const express = require("express");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const passport = require("passport");
+const cookieParser = require("cookie-parser");
 const FileStore = require("session-file-store");
 const http = require("http");
 const socketIo = require("socket.io");
@@ -12,10 +13,13 @@ const { Server } = require("socket.io");
 const handlebars = require("express-handlebars");
 const cartsRouter = require("./routes/carts.router");
 const productsRouter = require("./routes/products.router");
-const userRouter = require("./routes/user.router")
+const userRouter = require("./routes/user.router");
 const { ProductManager } = require("./services/productService");
 const { CartManager } = require("./services/cartService");
-const initializePassport = require("./config/passport.config.js");
+const { initializePassport } = require("./config/passport.config.js");
+const userModel = require("./models/user.model.js");
+const { ExtractJWT } = require("./config/passport.config.js")
+const JwtStrategy = require("passport-jwt").Strategy;
 
 const app = express();
 
@@ -31,8 +35,6 @@ const io = new Server(server);
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("views engine", "handlebars");
-
-
 
 //middlewars
 app.use(express.json());
@@ -65,10 +67,31 @@ app.use(session({
     saveUninitialized: false
 }));
 
+//configuracion cookie
+app.use(cookieParser())
+
 //configuracion passport
 initializePassport(passport)
 app.use(passport.initialize())
 app.use(passport.session())
+
+//configuracion token
+const jwtOptions = {
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey: "Secret-key"
+}
+
+passport.use(
+    new JwtStrategy(jwtOptions, (jwt_payload, done) => {
+        const user = userModel.find((user) => user.email === jwt_payload.email)
+
+        if (!user) {
+            return done(null, false, { message: "Usuario no encontrado" })
+        }
+
+        return done(null, user)
+    })
+)
 
 //rutas
 app.use("/api/cart", cartsRouter);
